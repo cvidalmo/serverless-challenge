@@ -11,7 +11,7 @@ api.use(express.json())
 //Consulta funcionário pelo código.
 api.get("/funcionario/:func_id", async (request, resource) => {
   const params = {
-    tabFunc: TAB_FUN,
+    TableName: TAB_FUN,
     Key: {
       func_id: request.params.func_id,
     },
@@ -36,7 +36,7 @@ api.get("/funcionario/:func_id", async (request, resource) => {
 //Consulta funcionário pelo nome
 api.get("/funcionario/:func_nome", async (request, resource) => {
   const params = {
-    tabFunc: TAB_FUN,
+    TableName: TAB_FUN,
     Key: {
       func_nome: request.params.func_nome,
     },
@@ -59,11 +59,11 @@ api.get("/funcionario/:func_nome", async (request, resource) => {
 })
 
 //Inclue funcionário
-api.post("/funcionario", async (request, resource) => {
+api.post("/funcionarios", async (request, resource) => {
   const { func_id, func_nome, func_cargo, func_idade } = request.body
 
   const params = {
-    tabFunc: TAB_FUN,
+    TableName: TAB_FUN,
     Item: {
       func_id,
       func_nome,
@@ -84,7 +84,7 @@ api.post("/funcionario", async (request, resource) => {
 //Exclue funcionário.
 api.delete("/funcionario/:func_id", async (request, resource) => {
   const params = {
-    tabFunc: TAB_FUN,
+    TableName: TAB_FUN,
     Key: {
       func_id: request.params.func_id,
     },

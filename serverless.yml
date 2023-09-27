@@ -49,4 +49,4 @@ resources:
           - AttributeName: func_id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        tabFunc: ${self:custom.tabelaFunc}
+        TableName: ${self:custom.tabelaFunc}
