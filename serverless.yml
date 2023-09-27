@@ -7,7 +7,7 @@ plugins:
   - serverless-esbuild
 
 custom:
-  tabelaFunc: "funcionarios"
+  tabelaFunc: "funcionarios-${sls:stage}"
   esbuild:
     bundle: true
     minify: false
