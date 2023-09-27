@@ -1,4 +1,4 @@
-org: cvidalmo
+org: deploy
 app: serverless-challenge
 service: serverless-challenge
 frameworkVersion: "3"
