@@ -43,7 +43,7 @@ api.get("/funcionario/:func_nome", async (request, resource) => {
   }
 
   try {
-    const { Item } = await dbClient.scan(params).promise()
+    const { Item } = await dbClient.get(params).promise()
     if (Item) {
       const { func_id, func_nome, func_cargo, func_idade } = Item
       return resource.json({ func_id, func_nome, func_cargo, func_idade})
