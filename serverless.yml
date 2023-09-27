@@ -1,0 +1,52 @@
+org: cvidalmo
+app: serverless-challenge
+service: serverless-challenge
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+
+custom:
+  tabelaFunc: "funcionarios"
+  esbuild:
+    bundle: true
+    minify: false
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [tabelaFuncionarios, Arn]
+  environment:
+    TAB_FUN: ${self:custom.tabelaFunc}
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: "*"
+
+resources:
+  Resources:
+    tabelaFuncionarios:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: func_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: func_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        tabFunc: ${self:custom.tabelaFunc}

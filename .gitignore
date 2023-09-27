@@ -1,3 +1,5 @@
 
 Projeto.rtf
 node_modules/
+.esbuild/
+.serverless/
