@@ -1,3 +1,12 @@
+# Bibliotecas
+
+npm i aws-sdk
+npm i @aws-sdk/client-dynamodb
+npm i express 
+npm i serverless-http 
+npm i serverless 
+npm i serverless-esbuild
+
 # Serverless Challenge
 
 # Antes de começar....
