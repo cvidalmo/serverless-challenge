@@ -1,9 +1,10 @@
-import AWS from "aws-sdk"
+import * as AWS from "@aws-sdk/client-dynamodb"
+const dbClient = new AWS.DynamoDB({ region: "us-east-1" })
+
 import express from "express"
 import serverless from "serverless-http"
 
 const api = express()
-const dbClient = new AWS.DynamoDB.DocumentClient()
 const TAB_FUN = process.env.TAB_FUN
 
 api.use(express.json())
@@ -28,7 +29,7 @@ api.get("/funcionario/:func_id", async (request, resource) => {
         .json({ error: `Não foi possível encontrar funcionário com esse identificador: ${func_id}` })
     }
   } catch (error) {
-    console.log(error)
+    console.log("/funcionario/:func_id", error)
     return resource.status(500).json({ error: "Não foi possível recuperar informações do funcionário." })
   }
 })
@@ -53,13 +54,13 @@ api.get("/funcionario/:func_nome", async (request, resource) => {
         .json({ error: `Não foi possível encontrar funcionário com esse nome: ${func_nome}` })
     }
   } catch (error) {
-    console.log(error)
+    console.log("/funcionario/:func_nome", error)
     return resource.status(500).json({ error: "Não foi possível recuperar informações do funcionário." })
   }
 })
 
 //Inclue funcionário
-api.post("/funcionarios", async (request, resource) => {
+api.post("/funcionario", async (request, resource) => {
   const { func_id, func_nome, func_cargo, func_idade } = request.body
 
   const params = {
@@ -76,7 +77,7 @@ api.post("/funcionarios", async (request, resource) => {
     await dbClient.put(params).promise()
     return resource.json({ func_id, func_nome, func_cargo, func_idade })
   } catch (error) {
-    console.log(error)
+    console.log("/funcionario", error)
     return resource.status(500).json({ error: "Não foi possível criar funcionário." })
   }
 })
@@ -94,7 +95,7 @@ api.delete("/funcionario/:func_id", async (request, resource) => {
     await dbClient.delete(params).promise()
     return resource.json({ message: "Funcionário excluído com sucesso." })
   } catch (error) {
-    console.log(error)
+    console.log("/funcionario/:func_id", error)
     return resource.status(500).json({ error: `Não foi possível excluir funcionário: ${request.params.func_id}` })
   }
 })
