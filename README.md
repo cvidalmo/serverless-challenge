@@ -3,7 +3,7 @@
 
 Deve ter conta na Amazon e GitHub.
 
-Criar na Amazon usuário IAM para acessar com o AWS CLI.
+Criar na Amazon, usuário IAM para acessar com o AWS CLI.
 
 Instalar o Git.
 Baixar o AWS CLI.
@@ -32,7 +32,7 @@ npm i serverless-esbuild
 # serverless.yml
 Arquivo de configuração do Serverless Framework para o projeto.
 
-Nesse arquivo, alterar o valor de org para o seu usuário do Serverless Framework.
+Nesse arquivo, alterar o valor de ORG para o seu usuário do Serverless Framework.
 
 org: cvidalmo
 
