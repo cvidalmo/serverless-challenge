@@ -7,7 +7,7 @@ plugins:
   - serverless-esbuild
 
 custom:
-  tabelaFunc: "funcionarios-${sls:stage}"
+  tabelaFunc: "tabela-func-${sls:stage}"
   esbuild:
     bundle: true
     minify: false
@@ -45,8 +45,17 @@ resources:
         AttributeDefinitions:
           - AttributeName: func_id
             AttributeType: S
+          - AttributeName: func_nome
+            AttributeType: S            
         KeySchema:
           - AttributeName: func_id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: func_nome_index
+            KeySchema:
+              - AttributeName: func_nome
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
         TableName: ${self:custom.tabelaFunc}

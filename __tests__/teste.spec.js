@@ -20,23 +20,6 @@ test("Consultar funcionário pelo ID - NÃO Existente", async () => {
 
 //-------------------------------------------------------------------------
 
-//GET: .../funcionario_nome/:func_nome   > Consultar funcionário pelo NOME.
-test("Consultar funcionário pelo NOME - Existente", async () => {
-    const retorno = await request(url).get("/funcionario_nome/VidalMelo");
-    //console.log(retorno.status);
-    //console.log(retorno._body);
-    expect(retorno.status).toBe(200);
-});
-
-test("Consultar funcionário pelo NOME - NÃO Existente", async () => {
-    const retorno = await request(url).get("/funcionario_nome/NAO Existe");
-    //console.log(retorno.status);
-    //console.log(retorno._body);
-    expect(retorno.status).toBe(404);
-});  //*/
-
-//-------------------------------------------------------------------------
-
 //PUT: .../funcionario   > Incluir/Alterar funcionário.
 test("Incluir/Alterar funcionário - Incluir", async () => {
     const envio = {"func_id": "100",

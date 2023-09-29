@@ -8,7 +8,6 @@ DATA....: Setembro de 2023.
 ENDPOINTS: (Request de entrada deverá ser em JSON).
 -------------------------------------------------------------------------
 GET: .../funcionario_id/:func_id   > Consultar funcionário pelo ID.
-GET: .../funcionario_nome/:func_nome   > Consultar funcionário pelo NOME.
 PUT: .../funcionario   > Incluir/Alterar funcionário.
 POST: .../funcionario   > Atualizar funcionário.
 DELETE: .../funcionario/func_id   > Excluir funcionário.
@@ -70,53 +69,6 @@ api.get("/funcionario_id/:func_id", async (request, response) => {
     .json({erro: `Não foi possível recuperar informações do funcionário com ID: ${request.params.func_id}.`,
            endpoint: "GET: .../funcionario_id/:func_id",
            exemplo: ".../funcionario_id/10" });
-
-  }
-});
-
-
-
-/* Consulta funcionário pelo nome. ***********************************/
-api.get("/funcionario_nome/:func_nome", async (request, response) => {
-  const comando = new QueryCommand({
-    TableName: TAB_FUNC,
-    KeyConditionExpression: "func_nome = \"Debora\" ",
-    //KeyConditionExpression: "CONTAINS (#func_nome, )",
-    /*ExpressionAttributeValues: {
-      ":func_nome": { S: request.params.func_nome }
-    },
-    ExpressionAttributeNames: {
-      "#func_nome": { S: "func_nome" }
-    },*/
-  });
-
-  try {
-    const retorno = await dbClient.send(comando);
-    return response.json({ retorno });
-    /*if (retorno) {
-      if (retorno.Items) {
-        const { func_id, func_nome, func_cargo, func_idade } = retorno.Items;
-        return response.json({ func_id, func_nome, func_cargo, func_idade});
-      }
-    } */
-    /*
-    const { Item } = await dbClient.getItem(params);  //.promise()
-    if (Item) {
-      const { func_id, func_nome, func_cargo, func_idade } = Item;
-      return response.json({ func_id, func_nome, func_cargo, func_idade});
-    } else {*/
-
-    /*return response
-      .status(404)
-      .json({ mensagem: `Não foi encontrado funcionário com esse nome: ${request.params.func_nome}` });*/
-
-  } catch (erro) {
-
-    return response
-      .status(500)
-      .json({erro: `Não foi possível recuperar informações do funcionário ${request.params.func_nome}.`,
-             endpoint: "GET: .../funcionario_nome/:func_nome",
-             exemplo: ".../funcionario_nome/CARLOS" });
 
   }
 });
