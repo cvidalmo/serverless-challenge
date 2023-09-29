@@ -7,8 +7,8 @@ DATA....: Setembro de 2023.
 
 ENDPOINTS: (Request de entrada deverá ser em JSON).
 -------------------------------------------------------------------------
-GET: .../funcionario_id/func_id   > Consultar funcionário pelo ID.
-GET: .../funcionario_nome/func_nome   > Consultar funcionário pelo NOME.
+GET: .../funcionario_id/:func_id   > Consultar funcionário pelo ID.
+GET: .../funcionario_nome/:func_nome   > Consultar funcionário pelo NOME.
 PUT: .../funcionario   > Incluir/Alterar funcionário.
 POST: .../funcionario   > Atualizar funcionário.
 DELETE: .../funcionario/func_id   > Excluir funcionário.
