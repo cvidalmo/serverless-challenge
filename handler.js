@@ -1,109 +1,282 @@
-import * as AWS from "@aws-sdk/client-dynamodb"
-const dbClient = new AWS.DynamoDB({ region: "us-east-1" })
+/*
+SERVERLESS CHALLENGE
+====================
 
-import express from "express"
-import serverless from "serverless-http"
+AUTOR...: Carlos Vidal.
+DATA....: Setembro de 2023.
 
-const api = express()
-const TAB_FUN = process.env.TAB_FUN
+ENDPOINTS: (Request de entrada deverá ser em JSON).
+-------------------------------------------------------------------------
+GET: .../funcionario_id/func_id   > Consultar funcionário pelo ID.
+GET: .../funcionario_nome/func_nome   > Consultar funcionário pelo NOME.
+PUT: .../funcionario   > Incluir/Alterar funcionário.
+POST: .../funcionario   > Atualizar funcionário.
+DELETE: .../funcionario/func_id   > Excluir funcionário.
+*******************************************************************************/
 
-api.use(express.json())
+/* Biblioteca @aws-sdk/client-dynamodb responsável pelo acesso ao banco de dados DynamoDB.
+   Importado somente os recursos que serão usados: Get, Put, Delete, Update e Query. */
+import { DynamoDBClient, 
+         GetItemCommand,
+         QueryCommand,
+         PutItemCommand, 
+         UpdateItemCommand,
+         DeleteItemCommand } from "@aws-sdk/client-dynamodb";
+const dbClient = new DynamoDBClient({ region: "us-east-1" });
 
-//Consulta funcionário pelo código.
-api.get("/funcionario/:func_id", async (request, resource) => {
-  const params = {
-    TableName: TAB_FUN,
+/* Pacote de estrutura web com classes e métodos que tornam a códifica simples e rápida. */
+import express from "express";
+
+/* Pacote que agiliza o acesso a web sem precisar de configuração de servidores complexos. */
+import serverless from "serverless-http";
+
+const api = express();  //Cria uma instância da biblioteca "express".
+const TAB_FUNC = process.env.TAB_FUN;  //Pega o nome da tabela em váriável de ambiente.
+
+api.use(express.json());  //Seta na "api" que o resquest de entrada será em JSON.
+
+
+
+/* Consulta funcionário pelo ID. *********************************/
+api.get("/funcionario_id/:func_id", async (request, response) => {
+  const comando = new GetItemCommand({
+    TableName: TAB_FUNC,
     Key: {
-      func_id: request.params.func_id,
-    },
-  }
+      func_id: {S: request.params.func_id}
+    }
+  });
 
   try {
-    const { Item } = await dbClient.get(params).promise()
-    if (Item) {
-      const { func_id, func_nome, func_cargo, func_idade } = Item
-      return resource.json({ func_id, func_nome, func_cargo, func_idade})
-    } else {
-      return resource
-        .status(404)
-        .json({ error: `Não foi possível encontrar funcionário com esse identificador: ${func_id}` })
-    }
-  } catch (error) {
-    console.log("/funcionario/:func_id", error)
-    return resource.status(500).json({ error: "Não foi possível recuperar informações do funcionário." })
-  }
-})
+    const retorno = await dbClient.send(comando);
+    if (retorno && retorno.Item) {
+      const { func_id, func_nome, func_cargo, func_idade } = retorno.Item;
+      return response
+        .status(200)
+        .json({ mensagem: `Consulta do funcionário com ID: ${request.params.func_id}, realizada com sucesso.`,
+                dados: { "func_id": func_id["S"], 
+                         "func_nome": func_nome["S"], 
+                         "func_cargo": func_cargo["S"], 
+                         "func_idade": func_idade["S"] }});
+    } 
 
-//Consulta funcionário pelo nome
-api.get("/funcionario/:func_nome", async (request, resource) => {
-  const params = {
-    TableName: TAB_FUN,
-    Key: {
-      func_nome: request.params.func_nome,
-    },
+    return response
+      .status(404)
+      .json({ mensagem: `Não foi encontrado funcionário com ID: ${request.params.func_id}.` });
+  
+  } catch (erro) {
+
+    return response
+    .status(500)
+    .json({erro: `Não foi possível recuperar informações do funcionário com ID: ${request.params.func_id}.`,
+           endpoint: "GET: .../funcionario_id/:func_id",
+           exemplo: ".../funcionario_id/10" });
+
   }
+});
+
+
+
+/* Consulta funcionário pelo nome. ***********************************/
+api.get("/funcionario_nome/:func_nome", async (request, response) => {
+  const comando = new QueryCommand({
+    TableName: TAB_FUNC,
+    KeyConditionExpression: "func_nome = \"Debora\" ",
+    //KeyConditionExpression: "CONTAINS (#func_nome, )",
+    /*ExpressionAttributeValues: {
+      ":func_nome": { S: request.params.func_nome }
+    },
+    ExpressionAttributeNames: {
+      "#func_nome": { S: "func_nome" }
+    },*/
+  });
 
   try {
-    const { Item } = await dbClient.get(params).promise()
+    const retorno = await dbClient.send(comando);
+    return response.json({ retorno });
+    /*if (retorno) {
+      if (retorno.Items) {
+        const { func_id, func_nome, func_cargo, func_idade } = retorno.Items;
+        return response.json({ func_id, func_nome, func_cargo, func_idade});
+      }
+    } */
+    /*
+    const { Item } = await dbClient.getItem(params);  //.promise()
     if (Item) {
-      const { func_id, func_nome, func_cargo, func_idade } = Item
-      return resource.json({ func_id, func_nome, func_cargo, func_idade})
-    } else {
-      return resource
-        .status(404)
-        .json({ error: `Não foi possível encontrar funcionário com esse nome: ${func_nome}` })
-    }
-  } catch (error) {
-    console.log("/funcionario/:func_nome", error)
-    return resource.status(500).json({ error: "Não foi possível recuperar informações do funcionário." })
+      const { func_id, func_nome, func_cargo, func_idade } = Item;
+      return response.json({ func_id, func_nome, func_cargo, func_idade});
+    } else {*/
+
+    /*return response
+      .status(404)
+      .json({ mensagem: `Não foi encontrado funcionário com esse nome: ${request.params.func_nome}` });*/
+
+  } catch (erro) {
+
+    return response
+      .status(500)
+      .json({erro: `Não foi possível recuperar informações do funcionário ${request.params.func_nome}.`,
+             endpoint: "GET: .../funcionario_nome/:func_nome",
+             exemplo: ".../funcionario_nome/CARLOS" });
+
   }
-})
+});
 
-//Inclue funcionário
-api.post("/funcionario", async (request, resource) => {
-  const { func_id, func_nome, func_cargo, func_idade } = request.body
 
-  const params = {
-    TableName: TAB_FUN,
+
+/* Inclusão e Alteração de funcionário. **************/
+api.put("/funcionario", async (request, response) => {
+  const { func_id, func_nome, func_cargo, func_idade } = request.body;
+
+  const comando = new PutItemCommand({
+    TableName: TAB_FUNC,
     Item: {
-      func_id,
-      func_nome,
-      func_cargo,
-      func_idade
-    },
-  }
+      func_id: {S: func_id},
+      func_nome: {S: func_nome},
+      func_cargo: {S: func_cargo},
+      func_idade: {S: func_idade}
+    } ,
+    ReturnValues: "ALL_OLD"
+  });
 
   try {
-    await dbClient.put(params).promise()
-    return resource.json({ func_id, func_nome, func_cargo, func_idade })
-  } catch (error) {
-    console.log("/funcionario", error)
-    return resource.status(500).json({ error: "Não foi possível criar funcionário." })
-  }
-})
+    const retorno = await dbClient.send(comando);
 
-//Exclue funcionário.
-api.delete("/funcionario/:func_id", async (request, resource) => {
-  const params = {
-    TableName: TAB_FUN,
+    if (retorno) {
+      if (retorno.Attributes) {
+        const { func_id, func_nome, func_cargo, func_idade } = retorno.Attributes;
+        return response
+          .status(200)
+          .json({ mensagem: `Atualização do funcionário ${func_nome["S"]}, realizada com sucesso.`,
+                  dados: { "func_id": func_id["S"], 
+                           "func_nome": func_nome["S"], 
+                           "func_cargo": func_cargo["S"], 
+                           "func_idade": func_idade["S"] }});
+      }
+
+      return response
+        .status(200)
+        .json({ mensagem: `Inclusão do funcionário ${func_nome}, realizada com sucesso.`,
+                dados: { "func_id": func_id, 
+                        "func_nome": func_nome, 
+                        "func_cargo": func_cargo, 
+                        "func_idade": func_idade }});
+    } 
+
+  } catch (erro) {
+    return response
+      .status(500)
+      .json({ erro: `Não foi possível criar funcionário ${func_nome}.`,
+              endpoint: "PUT: .../funcionario",
+              estrutura_body: {"func_id": "...", 
+                              "func_nome": "...", 
+                              "func_cargo": "...", 
+                              "func_idade": "..."} });
+  };
+
+});
+
+
+
+/* Atualização de funcionário. ************************/
+api.post("/funcionario", async (request, response) => {
+  const { func_id, func_nome, func_cargo, func_idade } = request.body;
+
+  const comando = new UpdateItemCommand({
+    TableName: TAB_FUNC,
+    UpdateExpression : "SET func_nome = :func_nome, func_cargo = :func_cargo, func_idade = :func_idade",
+    Key : {
+      func_id: {S: func_id},
+    },
+    ExpressionAttributeValues : {
+      ":func_nome": {S: func_nome},
+      ":func_cargo": {S: func_cargo},
+      ":func_idade": {S: func_idade},
+    },
+    ReturnValues: "ALL_NEW"
+  });
+
+  try {
+    const retorno = await dbClient.send(comando);
+
+    if (retorno) {
+      if (retorno.Attributes) {
+        const { func_id, func_nome, func_cargo, func_idade } = retorno.Attributes;
+        return response
+          .status(200)
+          .json({ mensagem: `Atualização do funcionário ${func_nome["S"]}, realizada com sucesso.`,
+                  dados: { "func_id": func_id["S"], 
+                           "func_nome": func_nome["S"], 
+                           "func_cargo": func_cargo["S"], 
+                           "func_idade": func_idade["S"] }});
+      }
+
+      return response
+        .status(404)
+        .json({ mensagem: `Não foi possóvel atualizar funcionário ${func_nome}.`});
+    } 
+
+  } catch (erro) {
+    return response
+      .status(500)
+      .json({ erro: `Não foi possível atualizar funcionário ${func_nome}.`,
+              endpoint: "POST: .../funcionario",
+              estrutura_body: {"func_id": "...", 
+                               "func_nome": "...", 
+                               "func_cargo": "...", 
+                               "func_idade": "..."} });
+  };
+
+});
+
+
+
+/* Exclusão de funcionário. **************************************/
+api.delete("/funcionario/:func_id", async (request, response) => {
+  const comando = new DeleteItemCommand({
+    TableName: TAB_FUNC,
     Key: {
-      func_id: request.params.func_id,
+      func_id: {S: request.params.func_id}
     },
-  }
+    ReturnValues: "ALL_OLD"
+  });
 
   try {
-    await dbClient.delete(params).promise()
-    return resource.json({ message: "Funcionário excluído com sucesso." })
-  } catch (error) {
-    console.log("/funcionario/:func_id", error)
-    return resource.status(500).json({ error: `Não foi possível excluir funcionário: ${request.params.func_id}` })
+    const retorno = await dbClient.send(comando);
+    if (retorno && retorno.Attributes) {
+      const { func_id, func_nome, func_cargo, func_idade } = retorno.Attributes;
+      return response
+        .status(200)
+        .json({ mensagem: `Funcionário excluído com sucesso.`,
+                dados: {"func_id": func_id["S"], 
+                        "func_nome": func_nome["S"], 
+                        "func_cargo": func_cargo["S"], 
+                        "func_idade": func_idade["S"] }});
+    }
+
+    return response
+      .status(404)
+      .json({ mensagem: `Não foi encontrado funcionário com ID: ${request.params.func_id}.` });
+
+  } catch (erro) {
+    
+    return response
+      .status(500)
+      .json({erro: `Não foi possível excluir funcionário com ID: ${request.params.func_id}.`,
+             endpoint: "DELETE: .../funcionario/:func_id",
+             exemplo: ".../funcionario/6" });
   }
-})
+});
 
-api.use((request, resource, next) => {
-  return resource.status(404).json({
-    error: "EndPoint não encontrado.",
-  })
-})
 
-export const handler = serverless(api)
+
+/* Caso não seja passado nenhum endpoint valido. */
+api.use((request, response, next) => {
+  return response
+    .status(404)
+    .json({erro: "EndPoint não encontrado."});
+});
+
+
+
+/* Exporta todos recursos da api usando o serverless. */
+export const handler = serverless(api);
