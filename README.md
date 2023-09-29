@@ -52,7 +52,18 @@ O arquivo com os testes a serem feitos estão dentro da pasta: /\_\_tests\_\_/te
 
 - Execute: npx jest
 
-#
+
+## ENDPOINTS:
+Entrada deverá ser em JSON.
+
+URL: https://xpqq0dj9f9.execute-api.us-east-1.amazonaws.com
+
+- GET: .../funcionario_id/:func_id   > Consultar funcionário pelo ID.
+- PUT: .../funcionario   > Incluir/Alterar funcionário.
+- POST: .../funcionario   > Atualizar funcionário.
+- DELETE: .../funcionario/func_id   > Excluir funcionário.
+
+
 #
 
 
