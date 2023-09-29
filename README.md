@@ -46,7 +46,22 @@ service: serverless-challenge
 
 .
 
+# Testes
+Para fazer os testes, deve-se seguir os seguintes passos:
+
+Instalar as bibliotecas JEST e SUPERTEST.
+
+npm i -D jest
+
+npm i -D supertest
+
+O arquivo com os testes a serem feitos estão dentro da pasta: /\_\_tests\_\_/teste.spec.js
+
+Execute: npx jest
+
 #
+#
+
 
 
 # Serverless Challenge
