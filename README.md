@@ -1,7 +1,9 @@
 
 # Requisitos
+
 Deve ter conta na Amazon e GitHub.
-Criar na Amazon usuário IAM para acessar com o AWS CLI.
+
+Criar na Amazon, usuário IAM para acessar com o AWS CLI.
 
 Instalar o Git.
 Baixar o AWS CLI.
@@ -13,21 +15,35 @@ git clone https://github.com/cvidalmo/serverless-challenge.git
 
 # Bibliotecas necessárias
 Use o comando npm para instalar as bibliotecas:
+
 npm i aws-sdk
+
 npm i @aws-sdk/client-dynamodb
+
 npm i express
+
 npm i serverless-http
+
 npm i serverless
+
 npm i serverless-esbuild
+
 
 # serverless.yml
 Arquivo de configuração do Serverless Framework para o projeto.
-Nesse arquivo, alterar o valor de org para o seu usuário do Serverless Framework.
+
+Nesse arquivo, alterar o valor de ORG para o seu usuário do Serverless Framework.
+
 org: cvidalmo
+
 app: serverless-challenge
+
 service: serverless-challenge
+
 .
+
 .
+
 .
 
 #
